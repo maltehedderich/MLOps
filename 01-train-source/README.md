@@ -2,6 +2,8 @@
 
 This section structures the process for experimenting with new data or use cases. For this purpose, a pipeline for orchestrated experimentation is created.
 
+This process defined by Google can also be divided into two separate processes. The first three process steps correspond to those of a data engineer who could make the fully processed data available in a feature store for further processing. The data scientists could then use this data for their models.
+
 ## Pipeline Steps
 
 **Input**: Development Dataset
