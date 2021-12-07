@@ -1,0 +1,69 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "01-train-source",
+      "path": "./01-train-source"
+    },
+    {
+      "name": "02-train-artifact",
+      "path": "./02-train-artifact"
+    },
+    {
+      "name": "03-train-model",
+      "path": "./03-train-model"
+    },
+    {
+      "name": "04-serv-deploy",
+      "path": "./04-serv-deploy"
+    },
+    {
+      "name": "05-serv-monitor",
+      "path": "./05-serv-monitor"
+    },
+  ],
+  "settings": {
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "python.formatting.provider": "black",
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "files.exclude": {
+      "**/.classpath": true,
+      "**/.project": true,
+      "**/.settings": true,
+      "**/.factorypath": true
+    },
+    "python.linting.flake8Args": [
+      "--max-line-length=150",
+      "--ignore=E203,W503",
+      "--exclude=**/__pycache__,.venv"
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic",
+
+    "workbench.colorCustomizations": {
+      "activityBar.activeBackground": "#12263A",
+      "activityBar.activeBorder": "#06BCC1",
+      "activityBar.background": "#12263A",
+      "activityBar.foreground": "#F4EDEA",
+      "activityBar.inactiveForeground": "#F4EDEA",
+      "activityBarBadge.background": "#06BCC1",
+      "activityBarBadge.foreground": "#F4EDEA",
+      "sash.hoverBorder": "#12263A",
+      "statusBar.background": "#12263A",
+      "statusBar.foreground": "#F4EDEA",
+      "statusBarItem.hoverBackground": "#12263A",
+      "statusBarItem.remoteBackground": "#12263A",
+      "statusBarItem.remoteForeground": "#F4EDEA",
+      "titleBar.activeBackground": "#12263A",
+      "titleBar.activeForeground": "#F4EDEA",
+      "titleBar.inactiveBackground": "#12263A",
+      "titleBar.inactiveForeground": "#F4EDEA"
+    }
+  }
+}
