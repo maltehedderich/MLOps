@@ -6,23 +6,23 @@
     },
     {
       "name": "01-train-source",
-      "path": "./01-train-source"
+      "path": "./Code/01-train-source"
     },
     {
       "name": "02-train-artifact",
-      "path": "./02-train-artifact"
+      "path": "./Code/02-train-artifact"
     },
     {
       "name": "03-train-model",
-      "path": "./03-train-model"
+      "path": "./Code/03-train-model"
     },
     {
       "name": "04-serv-deploy",
-      "path": "./04-serv-deploy"
+      "path": "./Code/04-serv-deploy"
     },
     {
       "name": "05-serv-monitor",
-      "path": "./05-serv-monitor"
+      "path": "./Code/05-serv-monitor"
     },
   ],
   "settings": {
@@ -45,7 +45,6 @@
       "--exclude=**/__pycache__,.venv"
     ],
     "java.configuration.updateBuildConfiguration": "automatic",
-
     "workbench.colorCustomizations": {
       "activityBar.activeBackground": "#12263A",
       "activityBar.activeBorder": "#06BCC1",
