@@ -1,9 +1,29 @@
 version: "3.9"
 
 services:
+  # This service runs the reverse proxy server for easier access to the other services.
+  # It allows the use of more human-friendly domains instead of ports.
+  traefik:
+    profiles: [ "dagster" ]
+    image: "traefik:v2.7"
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - dagster_network
+
   # This service runs the postgres DB used by dagster for run storage, schedule storage,
   # and event log storage.
   dagster_postgres:
+    profiles: [ "dagster" ]
     image: postgres:14
     container_name: dagster_postgres
     environment:
@@ -19,6 +39,7 @@ services:
   # Multiple containers like this can be deployed separately - each just needs to run on
   # its own port, and have its own entry in the workspace.yaml file that's loaded by dagit.
   dagster_repo:
+    profiles: [ "dagster" ]
     build:
       context: .
       dockerfile: ./code/dagster-repo/Dockerfile
@@ -37,6 +58,7 @@ services:
   # Since our instance uses the QueuedRunCoordinator, any runs submitted from dagit will be put on
   # a queue and later dequeued and launched by dagster-daemon.
   dagster_dagit:
+    profiles: [ "dagster" ]
     build:
       context: .
       dockerfile: ./services/dagster/Dockerfile
@@ -49,6 +71,10 @@ services:
       - -w
       - workspace.yaml
     container_name: dagster_dagit
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dagit.rule=Host(`dagit.127.0.0.1.nip.io`)"
+      - "traefik.http.routers.dagit.entrypoints=web"
     expose:
       - "3000"
     ports:
@@ -69,6 +95,7 @@ services:
   # This service runs the dagster-daemon process, which is responsible for taking runs
   # off of the queue and launching them, as well as creating runs from schedules or sensors.
   dagster_daemon:
+    profiles: [ "dagster" ]
     build:
       context: .
       dockerfile: ./services/dagster/Dockerfile
