@@ -3,27 +3,7 @@
     {
       "name": "root",
       "path": "."
-    },
-    {
-      "name": "01-train-source",
-      "path": "./Code/01-train-source"
-    },
-    {
-      "name": "02-train-artifact",
-      "path": "./Code/02-train-artifact"
-    },
-    {
-      "name": "03-train-model",
-      "path": "./Code/03-train-model"
-    },
-    {
-      "name": "04-serv-deploy",
-      "path": "./Code/04-serv-deploy"
-    },
-    {
-      "name": "05-serv-monitor",
-      "path": "./Code/05-serv-monitor"
-    },
+    }
   ],
   "settings": {
     "python.linting.pylintEnabled": false,
