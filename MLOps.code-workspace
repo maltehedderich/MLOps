@@ -3,6 +3,10 @@
     {
       "name": "root",
       "path": "."
+    },
+    {
+      "name": "pipelines",
+      "path": "./code/dagster-repo"
     }
   ],
   "settings": {
