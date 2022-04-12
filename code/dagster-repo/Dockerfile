@@ -1,14 +1,17 @@
-FROM python:3.8
+FROM python:3.9-slim-bullseye
 ENV POETRY_HOME=/opt/poetry POETRY_VIRTUALENVS_CREATE=false PYTHONPATH=/app
 
+# Install poetry and do some cleanup afterwards
+RUN apt-get update && apt-get install curl -y
+RUN curl -fsS -o get-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py && \
+    python get-poetry.py -y
+RUN apt-get remove curl -y && rm -rf /var/lib/apt/lists/*
 
 # Checkout and install dagster libraries needed to run the gRPC server
 # exposing your repository to dagit and dagster-daemon, and to load the DagsterInstance
 COPY  code/dagster-repo/poetry.lock code/dagster-repo/pyproject.toml /app/
 WORKDIR /app/
-RUN curl -fsS -o get-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py && \
-    python get-poetry.py -y && . $POETRY_HOME/env && \
-    poetry install --no-dev --no-interaction --no-root
+RUN . $POETRY_HOME/env && poetry install --no-dev --no-interaction --no-root
 COPY code/dagster-repo/dagster_repo /app/dagster_repo
 
 # Run dagster gRPC server on port 4000
