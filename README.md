@@ -1,8 +1,12 @@
 # MLOps in the Cloud
 
-This project was created within the context of the master's thesis "MLOps in the Cloud: Components, Patterns & Best Practices". The project serves as an example of the application of the best practices developed on the HashiCorp stack.
+This project was created within the context of the master's thesis "MLOps in the Cloud: Components, Patterns & Best Practices". The project serves as an example of the application of the best practices.
 
 ## Installation
+
+### Installation of Docker &
+
+### Installation of HashiCorp Stack
 
 The easiest way to install the necessary components on MacOS and Linux is via [Homebrew](https://brew.sh/).
 
@@ -26,13 +30,27 @@ Nomad updates can be realised later via the following command.
 
 ## Environment Variables
 
-TBD
-
 To run this project, you will need to add the following environment variables to your .env file
 
-`API_KEY`
+`COMPOSE_PROJECT_NAME`
+`MINIO_ROOT_USER`
+`MINIO_ROOT_PASSWORD`
+`MINIO_BUCKET_NAME`
+`MLFLOW_POSTGRES_USER`
+`MLFLOW_POSTGRES_PASSWORD`
+`MLFLOW_POSTGRES_DB`
+`MLFLOW_S3_ENDPOINT_URL`
+`MLFLOW_TRACKING_URI`
+`DAGSTER_POSTGRES_USER`
+`DAGSTER_POSTGRES_PASSWORD`
+`DAGSTER_POSTGRES_DB`
+`DAGSTER_CURRENT_IMAGE`
 
-`ANOTHER_API_KEY`
+After the creation of your .env file run
+
+```bash
+docker-compose --profile mlflow --profile dagster up -d --build
+```
 
 ## Deployment
 
