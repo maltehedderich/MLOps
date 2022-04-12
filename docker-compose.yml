@@ -4,8 +4,14 @@ services:
   # This service runs the reverse proxy server for easier access to the other services.
   # It allows the use of more human-friendly domains instead of ports.
   traefik:
-    profiles: [ "dagster" ]
+    profiles: [ "dagster", "mlflow" ]
     image: "traefik:v2.7"
+    container_name: traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.127.0.0.1.nip.io`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
     command:
       - "--log.level=DEBUG"
       - "--api.insecure=true"
@@ -18,7 +24,9 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - dagster_network
+      - mlops_bridge
+
+  #########################################################################################
 
   # This service runs the postgres DB used by dagster for run storage, schedule storage,
   # and event log storage.
@@ -26,12 +34,13 @@ services:
     profiles: [ "dagster" ]
     image: postgres:14
     container_name: dagster_postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: "postgres_user"
-      POSTGRES_PASSWORD: "postgres_password"
-      POSTGRES_DB: "dagster_db"
+      POSTGRES_USER: $DAGSTER_POSTGRES_USER
+      POSTGRES_PASSWORD: $DAGSTER_POSTGRES_PASSWORD
+      POSTGRES_DB: $DAGSTER_POSTGRES_DB
     networks:
-      - dagster_network
+      - mlops_bridge
 
   # This service runs the gRPC server that loads your user code, in both dagit
   # and dagster-daemon. By setting DAGSTER_CURRENT_IMAGE to its own image, we tell the
@@ -44,15 +53,15 @@ services:
       context: .
       dockerfile: ./code/dagster-repo/Dockerfile
     container_name: dagster_repo
-    image: dagster_repo_image
+    image: $DAGSTER_CURRENT_IMAGE
     restart: always
-    environment:
-      DAGSTER_POSTGRES_USER: "postgres_user"
-      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
-      DAGSTER_POSTGRES_DB: "dagster_db"
-      DAGSTER_CURRENT_IMAGE: "dagster_repo_image"
     networks:
-      - dagster_network
+      - mlops_bridge
+    environment:
+      - DAGSTER_POSTGRES_USER
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
+      - DAGSTER_CURRENT_IMAGE
 
   # This service runs dagit, which loads your user code from the user code container.
   # Since our instance uses the QueuedRunCoordinator, any runs submitted from dagit will be put on
@@ -80,14 +89,14 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DAGSTER_POSTGRES_USER: "postgres_user"
-      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
-      DAGSTER_POSTGRES_DB: "dagster_db"
+      - DAGSTER_POSTGRES_USER
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
     volumes:
       # Make docker client accessible so we can terminate containers from dagit
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - dagster_network
+      - mlops_bridge
     depends_on:
       - dagster_postgres
       - dagster_repo
@@ -105,19 +114,58 @@ services:
     container_name: dagster_daemon
     restart: on-failure
     environment:
-      DAGSTER_POSTGRES_USER: "postgres_user"
-      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
-      DAGSTER_POSTGRES_DB: "dagster_db"
+      - DAGSTER_POSTGRES_USER
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
     volumes:
       # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - dagster_network
+      - mlops_bridge
     depends_on:
       - dagster_postgres
       - dagster_repo
 
+  #########################################################################################
+
+  mlflow_minio:
+    profiles: [ "mlflow" ]
+    image: "minio/minio:RELEASE.2022-04-12T06-55-35Z"
+    container_name: mlflow_minio
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.minio.rule=Host(`minio.127.0.0.1.nip.io`)"
+      - "traefik.http.routers.minio.entrypoints=web"
+      - "traefik.http.services.minio.loadbalancer.server.port=9001"
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_volume:/data
+    networks:
+      - mlops_bridge
+
+  mlflow_postgres:
+    profiles: [ "mlflow" ]
+    image: postgres:14
+    container_name: mlflow_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: $MLFLOW_POSTGRES_USER
+      POSTGRES_PASSWORD: $MLFLOW_POSTGRES_PASSWORD
+      POSTGRES_DB: $MLFLOW_POSTGRES_DB
+    networks:
+      - mlops_bridge
+
 networks:
-  dagster_network:
+  mlops_bridge:
+    name: "mlops_bridge"
     driver: bridge
-    name: dagster_network
+
+volumes:
+  minio_volume:
