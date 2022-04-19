@@ -133,20 +133,20 @@ services:
     build:
       context: .
       dockerfile: ./services/mlflow/Dockerfile
-    entrypoint:
-      - mlflow
-      - server
-      - -h
-      - "0.0.0.0"
-      - -p
-      - "4000"
+      args:
+        - MLFLOW_POSTGRES_USER
+        - MLFLOW_POSTGRES_PASSWORD
+        - MLFLOW_POSTGRES_DB
+        - MLFLOW_S3_ENDPOINT_URL
+        - MINIO_BUCKET_NAME
+        - MINIO_ROOT_USER
+        - MINIO_ROOT_PASSWORD
+
     container_name: mlflow_server
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mlflow.rule=Host(`mlflow.127.0.0.1.nip.io`)"
       - "traefik.http.routers.mlflow.entrypoints=web"
-    expose:
-      - "4000"
     ports:
       - "4000:4000"
     networks:
