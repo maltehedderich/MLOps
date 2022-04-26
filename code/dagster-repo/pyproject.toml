@@ -1,20 +1,22 @@
 [tool.poetry]
-name = "dagster_repo"
-version = "0.1.0"
+name = "dagster-repo"
+version = "0.2.0"
 description = "Pipelines for dagster are defined here. Dagster allows multiple workspaces for different teams/users."
 authors = ["Malte Hedderich <malte.hedderich@serviceware.de>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-dagster = "^0.14.8"
-dagster-postgres = "^0.14.8"
-dagster-docker = "^0.14.8"
-
+python = ">=3.10,<3.11"
+dagster = "^0.14.12"
+pandas = "^1.4.2"
+scipy = "^1.8.0"
+sklearn = "^0.0"
+dagster-postgres = "^0.14.12"
+dagster-docker = "^0.14.12"
 
 [tool.poetry.dev-dependencies]
-flake8 = "^4.0.1"
 black = "^22.3.0"
+flake8 = "^4.0.1"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["setuptools>=62","poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
