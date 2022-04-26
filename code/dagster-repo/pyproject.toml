@@ -12,6 +12,8 @@ scipy = "^1.8.0"
 sklearn = "^0.0"
 dagster-postgres = "^0.14.12"
 dagster-docker = "^0.14.12"
+dagster-mlflow = "^0.14.12"
+boto3 = "^1.22.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"

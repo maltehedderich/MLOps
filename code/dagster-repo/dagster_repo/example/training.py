@@ -1,7 +1,9 @@
+from audioop import rms
 import pandas as pd
+import numpy as np
+import mlflow
 
-from dagster import Nothing, op
-
+from dagster import op
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
@@ -20,19 +22,23 @@ def split_data(context, data_df: pd.DataFrame) -> dict:
     return {"train_x": train_x, "train_y": train_y, "test_x": test_x, "test_y": test_y}
 
 
-@op
+@op(required_resource_keys={"mlflow"})
 def train_rfc(context, data_dict: dict) -> RandomForestClassifier:
-    rfc = RandomForestClassifier(
-        n_estimators=context.op_config["n_estimators"],
-        max_depth=context.op_config["max_depth"],
-    )
+    params = {
+        "n_estimators": context.op_config["n_estimators"],
+        "max_depth": context.op_config["max_depth"],
+    }
+
+    rfc = RandomForestClassifier(**params)
     rfc.fit(data_dict["train_x"], data_dict["train_y"])
-    return rfc
 
+    score = rfc.score(data_dict["test_x"], data_dict["test_y"])
 
-@op
-def evaluate_rfc(context, data_dict: dict, rfc: RandomForestClassifier) -> Nothing:
-    test_score = rfc.score(data_dict["test_x"], data_dict["test_y"])
-    context.log.info(
-        f"The mean accuracy on the given test data and labels is {test_score}."
+    mlflow.log_params(params)
+    mlflow.log_metrics({"Mean Accuracy": score})
+    mlflow.sklearn.log_model(
+        sk_model=rfc,
+        artifact_path="sklearn-model",
+        registered_model_name="wine_rfc",
     )
+    return rfc
