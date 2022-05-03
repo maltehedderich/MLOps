@@ -4,7 +4,7 @@ services:
   # This service runs the reverse proxy server for easier access to the other services.
   # It allows the use of more human-friendly domains instead of ports.
   traefik:
-    profiles: [ "dagster", "mlflow" ]
+    profiles: [ "dagster", "mlflow", "triton" ]
     image: "traefik:v2.7"
     container_name: traefik
     labels:
@@ -27,7 +27,7 @@ services:
       - mlops_bridge
 
   minio:
-    profiles: [ "mlflow" ]
+    profiles: [ "mlflow", "triton" ]
     image: "minio/minio:RELEASE.2022-04-12T06-55-35Z"
     container_name: minio
     labels:
@@ -198,6 +198,28 @@ services:
     networks:
       - mlops_bridge
 
+#########################################################################################
+
+  triton_server:
+      profiles: [ "triton" ]
+      image: nvcr.io/nvidia/tritonserver:22.04-py3
+      container_name: triton-server
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.triton.rule=Host(`triton.127.0.0.1.nip.io`)"
+        - "traefik.http.routers.triton.entrypoints=web"
+      ports:
+        - "8000:8000"
+        - "8001:8001"
+        - "8002:8002"
+      command: tritonserver --model-repository=/models
+      networks:
+        - mlops_bridge
+      volumes:
+        - triton_volume:/models
+    
+
+#########################################################################################
 networks:
   mlops_bridge:
     name: "mlops_bridge"
@@ -205,3 +227,4 @@ networks:
 
 volumes:
   minio_volume:
+  triton_volume:
