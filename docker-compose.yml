@@ -26,6 +26,28 @@ services:
     networks:
       - mlops_bridge
 
+  minio:
+    profiles: [ "mlflow" ]
+    image: "minio/minio:RELEASE.2022-04-12T06-55-35Z"
+    container_name: minio
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.minio.rule=Host(`minio.127.0.0.1.nip.io`)"
+      - "traefik.http.routers.minio.entrypoints=web"
+      - "traefik.http.services.minio.loadbalancer.server.port=9001"
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_volume:/data
+    networks:
+      - mlops_bridge
+
   #########################################################################################
 
   # This service runs the postgres DB used by dagster for run storage, schedule storage,
@@ -33,8 +55,13 @@ services:
   dagster_postgres:
     profiles: [ "dagster" ]
     image: postgres:14
-    container_name: dagster_postgres
+    container_name: dagster-postgres
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_USER: $DAGSTER_POSTGRES_USER
       POSTGRES_PASSWORD: $DAGSTER_POSTGRES_PASSWORD
@@ -52,19 +79,18 @@ services:
     build:
       context: .
       dockerfile: ./code/dagster-repo/Dockerfile
-    container_name: dagster_repo
+    container_name: dagster-repo
     image: $DAGSTER_CURRENT_IMAGE
     restart: always
     networks:
       - mlops_bridge
     environment:
-      - DAGSTER_POSTGRES_USER
-      - DAGSTER_POSTGRES_PASSWORD
-      - DAGSTER_POSTGRES_DB
-      - DAGSTER_CURRENT_IMAGE
-      - MLFLOW_S3_ENDPOINT_URL
-      - MINIO_ROOT_USER
-      - MINIO_ROOT_PASSWORD
+      DAGSTER_POSTGRES_USER:
+      DAGSTER_POSTGRES_PASSWORD:
+      DAGSTER_POSTGRES_DB:
+      DAGSTER_CURRENT_IMAGE:
+      MINIO_ROOT_USER:
+      MINIO_ROOT_PASSWORD:
 
   # This service runs dagit, which loads your user code from the user code container.
   # Since our instance uses the QueuedRunCoordinator, any runs submitted from dagit will be put on
@@ -82,7 +108,7 @@ services:
       - "3000"
       - -w
       - workspace.yaml
-    container_name: dagster_dagit
+    container_name: dagster-dagit
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dagit.rule=Host(`dagit.127.0.0.1.nip.io`)"
@@ -101,8 +127,10 @@ services:
     networks:
       - mlops_bridge
     depends_on:
-      - dagster_postgres
-      - dagster_repo
+      dagster_postgres:
+        condition: service_healthy
+      dagster_repo:
+        condition: service_started
 
   # This service runs the dagster-daemon process, which is responsible for taking runs
   # off of the queue and launching them, as well as creating runs from schedules or sensors.
@@ -114,7 +142,7 @@ services:
     entrypoint:
       - dagster-daemon
       - run
-    container_name: dagster_daemon
+    container_name: dagster-daemon
     restart: on-failure
     environment:
       - DAGSTER_POSTGRES_USER
@@ -145,7 +173,7 @@ services:
         - MINIO_ROOT_USER
         - MINIO_ROOT_PASSWORD
 
-    container_name: mlflow_server
+    container_name: mlflow-server
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mlflow.rule=Host(`mlflow.127.0.0.1.nip.io`)"
@@ -158,32 +186,10 @@ services:
       - mlflow_minio
       - mlflow_postgres
 
-  mlflow_minio:
-    profiles: [ "mlflow" ]
-    image: "minio/minio:RELEASE.2022-04-12T06-55-35Z"
-    container_name: mlflow_minio
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.minio.rule=Host(`minio.127.0.0.1.nip.io`)"
-      - "traefik.http.routers.minio.entrypoints=web"
-      - "traefik.http.services.minio.loadbalancer.server.port=9001"
-    restart: unless-stopped
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      - MINIO_ROOT_USER
-      - MINIO_ROOT_PASSWORD
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_volume:/data
-    networks:
-      - mlops_bridge
-
   mlflow_postgres:
     profiles: [ "mlflow" ]
     image: postgres:14
-    container_name: mlflow_postgres
+    container_name: mlflow-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: $MLFLOW_POSTGRES_USER
