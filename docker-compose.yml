@@ -18,9 +18,14 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+      - "--metrics.prometheus.addrouterslabels=true"
+      - "--entryPoints.metrics.address=:8082"
+      - "--metrics.prometheus.entryPoint=metrics"
     ports:
       - "80:80"
       - "8080:8080"
+      - "8082:8082"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
@@ -45,6 +50,41 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_volume:/data
+    networks:
+      - mlops_bridge
+
+  prometheus:
+    profiles: ["monitoring"]
+    image:  "prom/prometheus:v2.35.0"
+    container_name: prometheus
+    restart: unless-stopped
+    ports: 
+      - "9090:9090"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.127.0.0.1.nip.io`)"
+      - "traefik.http.routers.prometheus.entrypoints=web"
+    command:
+      - "--config.file=/config/prometheus.yml"
+    volumes:
+      - ./services/prometheus:/config
+      - prometheus_volume:/prometheus
+    networks:
+      - mlops_bridge
+
+  grafana:
+    profiles: ["monitoring"]
+    image:  "grafana/grafana:8.5.1"
+    container_name: grafana
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.127.0.0.1.nip.io`)"
+      - "traefik.http.routers.grafana.entrypoints=web"
+    ports: 
+      - "2000:3000"
+    volumes:
+      - grafana_volume:/var/lib/grafana
     networks:
       - mlops_bridge
 
@@ -227,3 +267,5 @@ networks:
 volumes:
   minio_volume:
   triton_volume:
+  prometheus_volume:
+  grafana_volume:
