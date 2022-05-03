@@ -488,6 +488,18 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "minio"
+version = "7.1.7"
+description = "MinIO Python SDK for Amazon S3 Compatible Cloud Storage"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+certifi = "*"
+urllib3 = "*"
+
+[[package]]
 name = "mlflow"
 version = "1.25.1"
 description = "MLflow: A Platform for ML Development and Productionization"
@@ -1063,7 +1075,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<3.11"
-content-hash = "5983df46ef78e0be95a427bbcd0d00495dd5850cb546609b8ae6ff2a76d2a0c7"
+content-hash = "299005fd5be14ef440550a57eb4b996bdbb3a90bf9f6658a04f6624b7ea92c63"
 
 [metadata.files]
 alembic = [
@@ -1410,6 +1422,10 @@ markupsafe = [
 mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},
     {file = "mccabe-0.6.1.tar.gz", hash = "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"},
+]
+minio = [
+    {file = "minio-7.1.7-py3-none-any.whl", hash = "sha256:b03497a94a79f782c5cc2450e505a25b3f0142118cf7a0cadb93219a0d5014d0"},
+    {file = "minio-7.1.7.tar.gz", hash = "sha256:191278a7f572080b9677891fa19801750a8de3a25b978de73551409413e64362"},
 ]
 mlflow = [
     {file = "mlflow-1.25.1-py3-none-any.whl", hash = "sha256:68e4bf115c56528928c4917eb1d51ec204e781c075878ed9261f38e4a41b8538"},
