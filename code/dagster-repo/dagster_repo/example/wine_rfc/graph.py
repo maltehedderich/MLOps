@@ -1,4 +1,4 @@
-from dagster_repo.example import (
+from dagster_repo.example.wine_rfc import (
     data_collection,
     feature_engineering,
     training,
