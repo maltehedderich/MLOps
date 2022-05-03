@@ -183,7 +183,7 @@ services:
     networks:
       - mlops_bridge
     depends_on:
-      - mlflow_minio
+      - minio
       - mlflow_postgres
 
   mlflow_postgres:
@@ -217,7 +217,6 @@ services:
         - mlops_bridge
       volumes:
         - triton_volume:/models
-    
 
 #########################################################################################
 networks:

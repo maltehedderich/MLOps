@@ -1,10 +1,9 @@
-from typing import Any
 from dagster import Nothing, graph, op
 from minio import Minio
 
 
 @op
-def create_client(context) -> Any:
+def make_buckets(context) -> Nothing:
     context.log.info(context.op_config["minio_endpoint"])
     client = Minio(
         context.op_config["minio_endpoint"],
@@ -12,11 +11,6 @@ def create_client(context) -> Any:
         context.op_config["minio_secret_key"],
         secure=False,
     )
-    return client
-
-
-@op
-def make_buckets(context, client) -> Nothing:
     for bucket_name in context.op_config["bucket_names"]:
         if client.bucket_exists(bucket_name):
             context.log.info(f"Bucket {bucket_name} already exists.")
@@ -27,21 +21,19 @@ def make_buckets(context, client) -> Nothing:
 
 @graph
 def create_buckets():
-    make_buckets(create_client())
+    make_buckets()
 
 
 create_buckets_test_job = create_buckets.to_job(
     config={
         "ops": {
-            "create_client": {
+            "make_buckets": {
                 "config": {
+                    "bucket_names": ["mlflow"],
                     "minio_endpoint": "localhost:9000",
                     "minio_access_key": "minio_user",
                     "minio_secret_key": "minio_password",
                 },
-            },
-            "make_buckets": {
-                "config": {"bucket_names": ["mlflow"]},
             },
         }
     }
@@ -50,16 +42,12 @@ create_buckets_test_job = create_buckets.to_job(
 create_buckets_dev_job = create_buckets.to_job(
     config={
         "ops": {
-            "create_client": {
-                "config": {
-                    "minio_endpoint": "minio:9000",
-                    "minio_access_key": "minio_user",
-                    "minio_secret_key": "minio_password",
-                },
-            },
             "make_buckets": {
                 "config": {
                     "bucket_names": ["mlflow"],
+                    "minio_endpoint": "minio:9000",
+                    "minio_access_key": "minio_user",
+                    "minio_secret_key": "minio_password",
                 },
             },
         }
