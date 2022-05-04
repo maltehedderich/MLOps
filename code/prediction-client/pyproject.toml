@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "prediction-client"
+version = "0.1.0"
+description = "This client is to simulate the access to the served models. In a real production system, this would be replaced by the consumer of the AI models."
+authors = ["Malte Hedderich <malte.hedderich@serviceware.de>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+dvc = "^2.10.2"
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+flake8 = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

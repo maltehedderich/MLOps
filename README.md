@@ -39,8 +39,8 @@ Nomad updates can be realised later via the following command.
 To run this project, you will need to add the following environment variables to your .env file
 
 `COMPOSE_PROJECT_NAME`
-`MINIO_ROOT_USER`
-`MINIO_ROOT_PASSWORD`
+`AWS_ACCESS_KEY_ID`
+`AWS_SECRET_ACCESS_KEY`
 `MINIO_BUCKET_NAME`
 `MLFLOW_POSTGRES_USER`
 `MLFLOW_POSTGRES_PASSWORD`

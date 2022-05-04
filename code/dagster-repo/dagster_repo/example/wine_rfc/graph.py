@@ -1,6 +1,5 @@
 from dagster_repo.example.wine_rfc import (
     data_collection,
-    feature_engineering,
     training,
     evaluate,
 )
@@ -11,8 +10,8 @@ from dagster_mlflow import end_mlflow_on_run_finished, mlflow_tracking
 @end_mlflow_on_run_finished
 @graph
 def wine_rfc():
-    data_dict = training.split_data(
-        feature_engineering.remove_outliers(data_collection.download_dataset())
+    data_dict = data_collection.split_data(
+        data_collection.remove_outliers(data_collection.download_dataset())
     )
     rfc = training.train_rfc(data_dict)
     evaluate.evaluate_rfc(data_dict, rfc)

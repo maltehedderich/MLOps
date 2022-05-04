@@ -1,14 +1,14 @@
 ops:
-  download_dataset:
+  load_sklearn_model:
     config:
-      url: "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
-  split_data:
+      model_uri: models:/wine_rfc/2
+  sklearn_to_onnx:
     config:
-      test_size: 0.2
-  train_rfc:
+      input_type: float_input
+      input_shape: [None, 11]
+  publish_to_mlflow:
     config:
-      n_estimators: 50
-      max_depth: 10
+      registered_model_name: wine_rfc_onnx
 resources:
   mlflow:
     config:

@@ -1,8 +1,8 @@
 FROM python:3.10-slim-bullseye
-ENV POETRY_HOME=/opt/poetry POETRY_VIRTUALENVS_CREATE=false PYTHONPATH=/app
+ENV POETRY_HOME=/opt/poetry POETRY_VIRTUALENVS_CREATE=false PYTHONPATH=/app CMAKE_ARGS="-DONNX_USE_PROTOBUF_SHARED_LIBS=ON"
 
 # Install poetry and do some cleanup afterwards
-RUN apt-get update && apt-get install curl -y
+RUN apt-get update && apt-get install curl cmake libprotobuf-dev protobuf-compiler build-essential -y
 RUN curl -fsS -o get-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py && \
     python get-poetry.py -y
 RUN apt-get remove curl -y && rm -rf /var/lib/apt/lists/*

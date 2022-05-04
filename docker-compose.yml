@@ -45,8 +45,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      - MINIO_ROOT_USER
-      - MINIO_ROOT_PASSWORD
+      - MINIO_ROOT_USER=$AWS_ACCESS_KEY_ID
+      - MINIO_ROOT_PASSWORD=$AWS_SECRET_ACCESS_KEY
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
@@ -131,8 +131,8 @@ services:
       DAGSTER_POSTGRES_PASSWORD:
       DAGSTER_POSTGRES_DB:
       DAGSTER_CURRENT_IMAGE:
-      MINIO_ROOT_USER:
-      MINIO_ROOT_PASSWORD:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
 
         # This service runs dagit, which loads your user code from the user code container.
         # Since our instance uses the QueuedRunCoordinator, any runs submitted from dagit will be put on
@@ -210,10 +210,12 @@ services:
         - MLFLOW_POSTGRES_USER
         - MLFLOW_POSTGRES_PASSWORD
         - MLFLOW_POSTGRES_DB
+        - TRITON_URL
+        - TRITON_
         - MINIO_ENDPOINT_URL
         - MINIO_BUCKET_NAME
-        - MINIO_ROOT_USER
-        - MINIO_ROOT_PASSWORD
+        - AWS_ACCESS_KEY_ID
+        - AWS_SECRET_ACCESS_KEY
 
     container_name: mlflow-server
     labels:
@@ -249,8 +251,8 @@ services:
     image: nvcr.io/nvidia/tritonserver:22.04-py3
     container_name: triton-server
     environment:
-      - AWS_ACCESS_KEY_ID=minio_user
-      - AWS_SECRET_ACCESS_KEY=minio_password
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.triton.rule=Host(`triton.127.0.0.1.nip.io`)"
@@ -259,7 +261,7 @@ services:
       - "8000:8000"
       - "8001:8001"
       - "8002:8002"
-    command: tritonserver --model-store=s3://minio:9000/triton --model-control-mode=explicit --strict-model-config=false
+    command: tritonserver --model-store=${TRITON_MODEL_REGISTRY} --model-control-mode=explicit --strict-model-config=false
     networks:
       - mlops_bridge
 

@@ -1,5 +1,6 @@
 from dagster import repository
 from dagster_repo.example.wine_rfc.graph import wine_rfc_dev_job
+from dagster_repo.example.publish_to_triton.graph import publish_sklearn_job
 from dagster_repo.helper import create_buckets_dev_job
 from dagster_repo.presets import calories_test_job
 
@@ -8,7 +9,12 @@ from dagster_repo.presets import calories_test_job
 
 @repository
 def dev_repo():
-    return [calories_test_job, wine_rfc_dev_job, create_buckets_dev_job]
+    return [
+        calories_test_job,
+        wine_rfc_dev_job,
+        create_buckets_dev_job,
+        publish_sklearn_job,
+    ]
 
 
 # end_repo_marker
