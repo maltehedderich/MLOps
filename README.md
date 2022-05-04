@@ -4,7 +4,13 @@ This project was created within the context of the master's thesis "MLOps in the
 
 ## Installation
 
-### Installation of Docker &
+The easiest way to install the necessary components on MacOS and Linux is via [Homebrew](https://brew.sh/).
+
+`brew install protobuf`
+
+### apt installations
+
+`sudo apt install cmake libprotobuf-dev protobuf-compiler build-essential`
 
 ### Installation of HashiCorp Stack
 
