@@ -10,7 +10,7 @@ The easiest way to install the necessary components on MacOS and Linux is via [H
 
 ### apt installations
 
-`sudo apt install cmake libprotobuf-dev protobuf-compiler build-essential`
+`sudo apt install cmake libprotobuf-dev protobuf-compiler build-essential setuptools`
 
 ### Installation of HashiCorp Stack
 
@@ -111,6 +111,12 @@ function App() {
 ## Authors
 
 - [@MalteHe](https://github.com/MalteHe)
+
+## Troubleshooting
+
+### triton-server container not starting
+
+error: creating server: Internal - Could not get MetaData for bucket with name triton due to exception: , error message: No response body.
 
 ## Acknowledgements
 

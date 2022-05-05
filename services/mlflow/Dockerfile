@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM python:3.9.12
 
 ARG MLFLOW_POSTGRES_USER
 ARG MLFLOW_POSTGRES_PASSWORD
@@ -11,7 +11,7 @@ ARG AWS_SECRET_ACCESS_KEY
 ENV MLFLOW_POSTGRES_URI="postgresql://${MLFLOW_POSTGRES_USER}:${MLFLOW_POSTGRES_PASSWORD}@mlflow_postgres:5432/${MLFLOW_POSTGRES_DB}"
 
 # install mlflow
-RUN apt update && apt install -y python3-pip python3 python3-setuptools git
+RUN apt update && apt install -y python3-pip python3-setuptools git
 RUN pip3 install psycopg2-binary mlflow
 
 # install MLflow Triton plugin
