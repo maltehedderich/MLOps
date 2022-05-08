@@ -12,15 +12,6 @@ ENV MLFLOW_POSTGRES_URI="postgresql://${MLFLOW_POSTGRES_USER}:${MLFLOW_POSTGRES_
 
 # install mlflow
 RUN apt update && apt install -y python3-pip python3-setuptools git
-RUN pip3 install psycopg2-binary mlflow
-
-# install MLflow Triton plugin
-RUN mkdir triton-server
-RUN git clone https://github.com/triton-inference-server/server.git /triton-server
-WORKDIR /triton-server/deploy/mlflow-triton-plugin/
-RUN python3 setup.py install
-
-WORKDIR /
-RUN rm -rf /triton-server
+RUN pip3 install psycopg2-binary boto3 mlflow
 
 ENTRYPOINT mlflow server --host "0.0.0.0" --port "4000" --backend-store-uri $MLFLOW_POSTGRES_URI --default-artifact-root "S3://mlflow" 

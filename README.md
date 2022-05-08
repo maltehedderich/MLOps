@@ -1,38 +1,42 @@
 # MLOps in the Cloud
 
-This project was created within the context of the master's thesis "MLOps in the Cloud: Components, Patterns & Best Practices". The project serves as an example of the application of the best practices.
+This project was created within the context of the master's thesis "Open Source MLOps: How to Productionize AI Solutions". The project serves as an example of the application of the best practices.
 
 ## Installation
 
-The easiest way to install the necessary components on MacOS and Linux is via [Homebrew](https://brew.sh/).
+All setup steps were carried out with Ubuntu 20.04. Other Linux distributions are most likely also compatible, while macOS and Windows require adaptations.
 
-`brew install protobuf`
+### Install build dependencies
 
-### apt installations
+#### Dependencies to install the Python project locally (optional)
 
-`sudo apt install cmake libprotobuf-dev protobuf-compiler build-essential setuptools`
-
-### Installation of HashiCorp Stack
-
-The easiest way to install the necessary components on MacOS and Linux is via [Homebrew](https://brew.sh/).
-
-The first step is to add the HashiCorp repository to Homebrew.
+If the python packages are intended to be use locally in addition to the Docker deployment, the following additional steps are necessary.
 
 ```bash
-  brew tap hashicorp/tap
+  sudo apt install cmake libprotobuf-dev protobuf-compiler build-essential libedit-dev
 ```
-
-Nomad, the workload orchestrator to deploy and manage applications, can then be installed using the following command.
 
 ```bash
-  brew install hashicorp/tap/nomad
+  curl https://pyenv.run | bash
+  pyenv update
+  pyenv install 3.9.12
 ```
 
-Nomad updates can be realised later via the following command.
+#
+
+### Installation of local dagster-repo
+
+#### Install build requirements
+
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+
+#### Install python project
 
 ```bash
-  brew upgrade hashicorp/tap/nomad
+  cd ./code/dagster-repo
 ```
+
+Change directory to the dagster-repo root folder.
 
 ## Environment Variables
 
@@ -116,7 +120,42 @@ function App() {
 
 ### triton-server container not starting
 
+```bash
 error: creating server: Internal - Could not get MetaData for bucket with name triton due to exception: , error message: No response body.
+```
+
+The most common reason for this is that the configured model registry path is not accessible. If the example is used here, the bucket must first be accessed via Minio's web interface http://localhost:9000 or by executing the create bucket pipeline in dagster dagit http://localhost:3000. A subsequent restart of the triton-server container should solve the problem.
+
+The run config for the create buckets pipeline shown below serves as an example.
+
+```yml
+ops:
+  make_buckets:
+    config:
+      bucket_names:
+        - mlflow
+        - triton
+        - dvc
+      minio_access_key: minio_user
+      minio_endpoint: minio:9000
+      minio_secret_key: minio_password
+```
+
+### 'poetry install' error
+
+```bash
+    × python setup.py egg_info did not run successfully.
+    │ exit code: 1
+    ╰─> [1 lines of output]
+        ERROR: Can not execute `setup.py` since setuptools is not available in the build environment.
+        [end of output]
+```
+
+The reason for this is often an outdated setuptools version. The solution is an update:
+
+```bash
+  poetry run pip install setuptools --upgrade
+```
 
 ## Acknowledgements
 

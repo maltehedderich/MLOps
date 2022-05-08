@@ -9,6 +9,9 @@ ops:
   publish_to_mlflow:
     config:
       registered_model_name: wine_rfc_onnx
+  deploy_to_triton:
+    config:
+      registered_model_name: wine_rfc_onnx
 resources:
   mlflow:
     config:
@@ -17,5 +20,7 @@ resources:
 
       env:
         MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL:"http://minio:9000"}
-        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:"minio_user"}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:"minio_password"}
+        TRITON_URL: ${TRITON_URL:"http://triton-server:8000"}
+        TRITON_MODEL_REPO: ${TRITON_MODEL_REPO:"s3://minio:9000/triton"}

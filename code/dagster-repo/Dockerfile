@@ -14,6 +14,14 @@ WORKDIR /app/
 RUN . $POETRY_HOME/env && poetry install --no-dev --no-interaction --no-root
 COPY code/dagster-repo/dagster_repo /app/dagster_repo
 
+# Checkout and install MLflow Triton plugin
+RUN mkdir /triton-server
+RUN git clone https://github.com/triton-inference-server/server.git /triton-server
+WORKDIR /triton-server/deploy/mlflow-triton-plugin/
+RUN python3 setup.py install
+WORKDIR /app/
+RUN rm -rf /triton-server
+
 # Run dagster gRPC server on port 4000
 
 EXPOSE 4000
