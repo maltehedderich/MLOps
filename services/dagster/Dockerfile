@@ -1,7 +1,7 @@
 # Dagster libraries to run both dagit and the dagster-daemon. Does not
 # need to have access to any pipeline code.
 
-FROM python:3.9.12
+FROM python:3.10.4
 
 RUN pip install \
     dagster \

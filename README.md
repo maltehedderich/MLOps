@@ -13,13 +13,13 @@ All setup steps were carried out with Ubuntu 20.04. Other Linux distributions ar
 If the python packages are intended to be use locally in addition to the Docker deployment, the following additional steps are necessary.
 
 ```bash
-  sudo apt install cmake libprotobuf-dev protobuf-compiler build-essential libedit-dev
+  sudo apt install cmake libprotobuf-dev protobuf-compiler build-essential libedit-dev libffi-dev
 ```
 
 ```bash
   curl https://pyenv.run | bash
   pyenv update
-  pyenv install 3.9.12
+  pyenv install 3.10.4
 ```
 
 #
@@ -120,6 +120,8 @@ function App() {
 
 ### 'poetry install' error
 
+#### setuptools not available
+
 ```bash
     × python setup.py egg_info did not run successfully.
     │ exit code: 1
@@ -132,6 +134,16 @@ The reason for this is often an outdated setuptools version. The solution is an 
 
 ```bash
   poetry run pip install setuptools --upgrade
+```
+
+#### ModuleNotFoundError: No module named '\_ctypes'
+
+The reason for this is often that the 'libffi-dev' package was not installed at the time where the python environment where created.
+
+```bash
+  sudo apt install libffi-dev
+  pyenv uninstall 3.10.4
+  pyenv install 3.10.4
 ```
 
 ## Acknowledgements
