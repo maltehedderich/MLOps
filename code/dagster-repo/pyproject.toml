@@ -20,7 +20,6 @@ protobuf = "^3.20.1"
 onnx = "^1.11.0"
 skl2onnx = "^1.11.1"
 onnxruntime = "^1.11.1"
-#triton-plugin = { git = "https://github.com:triton-inference-server/server.git", subdirectory = "deploy/mlflow-triton-plugin" }
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"

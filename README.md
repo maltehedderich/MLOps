@@ -118,29 +118,6 @@ function App() {
 
 ## Troubleshooting
 
-### triton-server container not starting
-
-```bash
-error: creating server: Internal - Could not get MetaData for bucket with name triton due to exception: , error message: No response body.
-```
-
-The most common reason for this is that the configured model registry path is not accessible. If the example is used here, the bucket must first be accessed via Minio's web interface http://localhost:9000 or by executing the create bucket pipeline in dagster dagit http://localhost:3000. A subsequent restart of the triton-server container should solve the problem.
-
-The run config for the create buckets pipeline shown below serves as an example.
-
-```yml
-ops:
-  make_buckets:
-    config:
-      bucket_names:
-        - mlflow
-        - triton
-        - dvc
-      minio_access_key: minio_user
-      minio_endpoint: minio:9000
-      minio_secret_key: minio_password
-```
-
 ### 'poetry install' error
 
 ```bash

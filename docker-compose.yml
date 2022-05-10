@@ -4,7 +4,7 @@ services:
   # This service runs the reverse proxy server for easier access to the other services.
   # It allows the use of more human-friendly domains instead of ports.
   traefik:
-    profiles: [ "dagster", "mlflow", "triton" ]
+    profiles: [ "dagster", "mlflow"]
     image: "traefik:v2.7"
     container_name: traefik
     labels:
@@ -32,7 +32,7 @@ services:
       - mlops_bridge
 
   minio:
-    profiles: [ "mlflow", "triton" ]
+    profiles: [ "mlflow" ]
     image: "minio/minio:RELEASE.2022-04-12T06-55-35Z"
     container_name: minio
     labels:
@@ -210,8 +210,6 @@ services:
         - MLFLOW_POSTGRES_USER
         - MLFLOW_POSTGRES_PASSWORD
         - MLFLOW_POSTGRES_DB
-        - TRITON_URL
-        - TRITON_MODEL_REPO
         - MINIO_ENDPOINT_URL
         - MINIO_BUCKET_NAME
         - AWS_ACCESS_KEY_ID
@@ -243,27 +241,6 @@ services:
       - mlops_bridge
     volumes:
       - mlflow_db:/var/lib/postgresql/data
-
-  #########################################################################################
-
-  triton_server:
-    profiles: [ "triton" ]
-    image: nvcr.io/nvidia/tritonserver:22.04-py3
-    container_name: triton-server
-    environment:
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.triton.rule=Host(`triton.127.0.0.1.nip.io`)"
-      - "traefik.http.routers.triton.entrypoints=web"
-    ports:
-      - "8000:8000"
-      - "8001:8001"
-      - "8002:8002"
-    command: tritonserver --model-store=${TRITON_MODEL_REPO} --model-control-mode=explicit --strict-model-config=false
-    networks:
-      - mlops_bridge
 
 #########################################################################################
 networks:

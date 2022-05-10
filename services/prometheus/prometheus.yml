@@ -18,10 +18,6 @@ scrape_configs:
     static_configs:
       - targets: ["prometheus:9090"]
 
-  - job_name: "triton"
-    static_configs:
-      - targets: ["triton-server:8002"]
-
   - job_name: "traefik"
     static_configs:
       - targets: ["traefik:8082"]
