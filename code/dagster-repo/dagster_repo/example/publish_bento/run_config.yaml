@@ -1,0 +1,21 @@
+ops:
+  load_mlflow_model:
+    config:
+      model_uri: models:/wine-rfc/2
+  pack_model:
+    config:
+      service_name: WineRFC
+  upload_service:
+    config:
+      s3_endpoint: http://minio:9000
+      bucket_name: bento
+
+resources:
+  mlflow:
+    config:
+      experiment_name: "wine_rfc"
+      mlflow_tracking_uri: ${MLFLOW_TRACKING_URI:"http://mlflow-server:4000"}
+      env:
+        MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL:"http://minio:9000"}
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:"minio_user"}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:"minio_password"}
