@@ -1,4 +1,4 @@
-FROM python:3.10.04
+FROM python:3.10.4
 ENV POETRY_HOME=/opt/poetry POETRY_VIRTUALENVS_CREATE=false PYTHONPATH=/app CMAKE_ARGS="-DONNX_USE_PROTOBUF_SHARED_LIBS=ON"
 
 # Install poetry and do some cleanup afterwards
