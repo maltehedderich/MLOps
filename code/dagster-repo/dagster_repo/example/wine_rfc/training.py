@@ -21,6 +21,6 @@ def train_rfc(context, data_dict: dict) -> RandomForestClassifier:
     mlflow.sklearn.log_model(
         sk_model=rfc,
         artifact_path="sklearn-model",
-        registered_model_name="wine_rfc",
+        registered_model_name="wine-rfc",
     )
     return rfc
