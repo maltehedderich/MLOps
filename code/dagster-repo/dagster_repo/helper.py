@@ -44,7 +44,7 @@ create_buckets_dev_job = create_buckets.to_job(
         "ops": {
             "make_buckets": {
                 "config": {
-                    "bucket_names": ["mlflow"],
+                    "bucket_names": ["mlflow", "bento"],
                     "minio_endpoint": "minio:9000",
                     "minio_access_key": "minio_user",
                     "minio_secret_key": "minio_password",
