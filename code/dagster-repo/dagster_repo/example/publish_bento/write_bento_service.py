@@ -1,26 +1,31 @@
-import pandas as pd
 import mlflow
 import boto3
 import shutil
+import importlib
+import os
 from pathlib import Path
-from time import sleep
 from dagster import op
 
-from bentoml import env, artifacts, api, BentoService
-from bentoml.adapters import DataframeInput
-from bentoml.frameworks.sklearn import SklearnModelArtifact
 
-
-def service_factory(class_name: str, env_params: dict, artifacts_list: list):
-    @env(**env_params)
-    @artifacts(artifacts_list)
-    class NewClass(BentoService):
-        @api(input=DataframeInput(), batch=True)
-        def predict(self, df: pd.DataFrame):
-            return self.artifacts.model.predict(df)
-
-    NewClass.__name__ = class_name
-    return NewClass
+def service_factory(class_name: str, env_params: dict):
+    module = Path("bento_service")
+    os.makedirs(module)
+    open(module / "__init__.py", "a").close()
+    lines = [
+        "import pandas as pd\n",
+        "from bentoml import env, artifacts, api, BentoService\n",
+        "from bentoml.adapters import JsonInput\n",
+        "from bentoml.frameworks.sklearn import SklearnModelArtifact\n",
+        f"env_params = {env_params}\n",
+        "@env(**env_params)\n",
+        "@artifacts([SklearnModelArtifact('model')])\n",
+        f"class {class_name}(BentoService):\n",
+        "    @api(input=JsonInput(), batch=True)\n",
+        "    def predict(self, model_input):\n",
+        "        return self.artifacts.model.predict(model_input)\n",
+    ]
+    with open(module / "service_class.py", "w") as file:
+        file.writelines(lines)
 
 
 @op(required_resource_keys={"mlflow"})
@@ -32,18 +37,28 @@ def load_mlflow_model(context):
 
 
 @op
-def pack_model(context, model):
-    service_class = service_factory(
-        context.op_config["service_name"],
-        {"infer_pip_packages": True},
-        [SklearnModelArtifact("model")],
-    )
-    context.log.info(f"Created service class {service_class.__name__}")
+def create_service(context):
+    service_name = context.op_config["service_name"]
+    service_factory(service_name, {"infer_pip_packages": True})
+    context.log.info(f"Created service_class.py with class {service_name}")
+    return service_name
+
+
+@op
+def pack_model(
+    context,
+    model,
+    service_name,
+):
+    module = importlib.import_module("bento_service.service_class")
+    service_class = getattr(module, service_name)
     service = service_class()
     service.pack("model", model)
-    saved_path = service.save()
+    saved_path = Path(service.save())
     context.log.info(f"Saved prediction service in {saved_path}")
-    return Path(saved_path)
+    with open(saved_path / "python_version", "w") as file:
+        file.write(context.op_config["python_version"])
+    return saved_path
 
 
 @op
@@ -61,4 +76,3 @@ def upload_service(context, zip_name):
     client.Bucket(context.op_config["bucket_name"]).upload_file(
         zip_name, zip_name.split("/")[-1]
     )
-    sleep(120)
