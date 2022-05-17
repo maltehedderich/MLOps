@@ -8,10 +8,12 @@ ARG MINIO_BUCKET_NAME
 ARG AWS_ACCESS_KEY_ID
 ARG AWS_SECRET_ACCESS_KEY
 
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+ENV MLFLOW_S3_ENDPOINT_URL=${MLFLOW_S3_ENDPOINT_URL}
 ENV MLFLOW_POSTGRES_URI="postgresql://${MLFLOW_POSTGRES_USER}:${MLFLOW_POSTGRES_PASSWORD}@mlflow_postgres:5432/${MLFLOW_POSTGRES_DB}"
 
 # install mlflow
-RUN apt update && apt install -y python3-pip python3-setuptools git
 RUN pip3 install psycopg2-binary boto3 mlflow
 
-ENTRYPOINT mlflow server --host "0.0.0.0" --port "4000" --backend-store-uri $MLFLOW_POSTGRES_URI --default-artifact-root "S3://mlflow" 
+ENTRYPOINT mlflow server --host "0.0.0.0" --port "4000" --backend-store-uri ${MLFLOW_POSTGRES_URI} --default-artifact-root "s3://${MINIO_BUCKET_NAME}" 

@@ -4,7 +4,7 @@ services:
   # This service runs the reverse proxy server for easier access to the other services.
   # It allows the use of more human-friendly domains instead of ports.
   traefik:
-    profiles: [ "dagster", "mlflow"]
+    profiles: [ "dagster", "mlflow" ]
     image: "traefik:v2.7"
     container_name: traefik
     labels:
@@ -210,7 +210,7 @@ services:
         - MLFLOW_POSTGRES_USER
         - MLFLOW_POSTGRES_PASSWORD
         - MLFLOW_POSTGRES_DB
-        - MINIO_ENDPOINT_URL
+        - MLFLOW_S3_ENDPOINT_URL
         - MINIO_BUCKET_NAME
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
