@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
-from scipy import stats
 
+from mlflow.models.signature import ModelSignature
+from mlflow.types.schema import Schema, ColSpec, DataType
+from scipy import stats
 from dagster import op
 from sklearn.model_selection import train_test_split
 
@@ -13,6 +15,19 @@ def download_dataset(context) -> pd.DataFrame:
         f"Read {len(data)} lines with {len(data.columns)-1} features from {context.op_config['url']}"
     )
     return data
+
+
+@op
+def get_signature(df: pd.DataFrame) -> ModelSignature:
+    dtypes = [dtype.to_pandas() for dtype in DataType]
+    schema_list = []
+    for name, dtype in zip(df.columns, df.dtypes):
+        type_index = dtypes.index(dtype) + 1
+        schema_list.append(ColSpec(DataType(type_index), name))
+    input_schema = Schema(schema_list[:-1])
+    output_schema = Schema([schema_list.pop()])
+    signature = ModelSignature(input_schema, output_schema)
+    return signature
 
 
 @op

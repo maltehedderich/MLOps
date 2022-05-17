@@ -2,10 +2,13 @@ import mlflow
 
 from dagster import op
 from sklearn.ensemble import RandomForestClassifier
+from mlflow.models.signature import ModelSignature
 
 
 @op(required_resource_keys={"mlflow"})
-def train_rfc(context, data_dict: dict) -> RandomForestClassifier:
+def train_rfc(
+    context, data_dict: dict, signature: ModelSignature
+) -> RandomForestClassifier:
     params = {
         "n_estimators": context.op_config["n_estimators"],
         "max_depth": context.op_config["max_depth"],
@@ -22,5 +25,6 @@ def train_rfc(context, data_dict: dict) -> RandomForestClassifier:
         sk_model=rfc,
         artifact_path="sklearn-model",
         registered_model_name="wine-rfc",
+        signature=signature,
     )
     return rfc

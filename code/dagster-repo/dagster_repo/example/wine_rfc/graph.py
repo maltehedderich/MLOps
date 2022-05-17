@@ -10,10 +10,10 @@ from dagster_mlflow import end_mlflow_on_run_finished, mlflow_tracking
 @end_mlflow_on_run_finished
 @graph
 def wine_rfc():
-    data_dict = data_collection.split_data(
-        data_collection.remove_outliers(data_collection.download_dataset())
-    )
-    rfc = training.train_rfc(data_dict)
+    data_df = data_collection.download_dataset()
+    signature = data_collection.get_signature(data_df)
+    data_dict = data_collection.split_data(data_collection.remove_outliers(data_df))
+    rfc = training.train_rfc(data_dict, signature)
     evaluate.evaluate_rfc(data_dict, rfc)
 
 
