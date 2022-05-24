@@ -1,5 +1,8 @@
-from dagster_repo.example.publish_bento.containerize_bento import build_image, run_image
-from dagster_repo.example.publish_bento.write_bento_service import (
+from dagster_repo.example.publish_model.containerize_bento import (
+    build_image,
+    run_image,
+)
+from dagster_repo.example.publish_model.write_bento_service import (
     load_mlflow_model,
     pack_model,
     upload_service,

@@ -13,5 +13,10 @@ def build_image(context, path):
 def run_image(context, image_id):
     client = docker.DockerClient()
     client.containers.run(
-        image_id, detach=True, ports={"5000/tcp": context.op_config["port"]}
+        image_id,
+        detach=True,
+        ports={"5000/tcp": context.op_config["port"]},
+        auto_remove=True,
+        hostname=context.op_config["hostname"],
+        network=context.op_config["network"],
     )

@@ -14,7 +14,9 @@ ops:
       bucket_name: bento
   run_image:
     config:
+      hostname: winerfc
       port: 5000
+      network: mlops_bridge
 resources:
   mlflow:
     config:
