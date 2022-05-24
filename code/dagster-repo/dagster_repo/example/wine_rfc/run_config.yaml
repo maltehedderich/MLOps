@@ -1,7 +1,7 @@
 ops:
   download_dataset:
     config:
-      url: "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
+      url: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv
   split_data:
     config:
       test_size: 0.2
