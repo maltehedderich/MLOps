@@ -21,3 +21,7 @@ scrape_configs:
   - job_name: "traefik"
     static_configs:
       - targets: ["traefik:8082"]
+
+  - job_name: "WineRFC"
+    static_configs:
+      - targets: ["winerfc:5000"]
