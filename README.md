@@ -108,6 +108,15 @@ function App() {
 }
 ```
 
+### Default Login Credentials
+
+- Minio
+  - Username: minio_user
+  - Password: minio_password
+- Grafana
+  - Username: admin
+  - Password: admin
+
 ## Screenshots
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
