@@ -29,7 +29,7 @@ def service_factory(class_name: str, env_params: dict):
 
 
 @op(required_resource_keys={"mlflow"})
-def load_mlflow_model(context):
+def load_model(context):
     model_uri = context.op_config["model_uri"]
     context.log.info(f"Retrieving Model: {model_uri}.")
     model = mlflow.sklearn.load_model(model_uri)

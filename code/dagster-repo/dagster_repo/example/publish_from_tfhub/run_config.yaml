@@ -1,0 +1,16 @@
+ops:
+  split_url:
+    config:
+      url: https://tfhub.dev/google/universal-sentence-encoder-multilingual/3
+  download_model:
+    config:
+      example_input: Diana tried to explain what it was like, but I guess ice cream is one of those things that are beyond imagination.
+resources:
+  mlflow:
+    config:
+      experiment_name: universal-sentence-encoder-multilingual/3
+      mlflow_tracking_uri: http://mlflow-server:4000
+      env:
+        MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+        AWS_ACCESS_KEY_ID: minio_user
+        AWS_SECRET_ACCESS_KEY: minio_password
