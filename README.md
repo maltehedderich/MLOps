@@ -1,4 +1,4 @@
-# MLOps in the Cloud
+# Open Source MLOps
 
 This project was created within the context of the master's thesis "Open Source MLOps: How to Unlock the Potential of Machine Learning". The project serves as additional validation step for the designed MLOps Architecture.
 
@@ -6,9 +6,9 @@ This project was created within the context of the master's thesis "Open Source 
 
 All setup steps were carried out with Ubuntu 20.04. Other Linux distributions are most likely also compatible, while macOS and Windows require adaptations.
 
-### Install build dependencies
+### Install Build Dependencies
 
-#### Dependencies to install the Python project locally (optional)
+#### Dependencies to Install the Python Project Locally (Optional)
 
 If the python packages are intended to be use locally in addition to the Docker deployment, the following additional steps are necessary.
 
@@ -22,13 +22,13 @@ If the python packages are intended to be use locally in addition to the Docker 
   pyenv install 3.10.4
 ```
 
-### Installation of local dagster-repo
+### Installation of Local Dagster-Repo
 
-#### Install build requirements
+#### Install Build Requirements
 
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 
-#### Install python project
+#### Install Python Project
 
 ```bash
   cd ./code/dagster-repo
