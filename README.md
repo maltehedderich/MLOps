@@ -1,6 +1,6 @@
 # MLOps in the Cloud
 
-This project was created within the context of the master's thesis "Open Source MLOps: How to Productionize AI Solutions". The project serves as an example of the application of the best practices.
+This project was created within the context of the master's thesis "Open Source MLOps: How to Unlock the Potential of Machine Learning". The project serves as additional validation step for the designed MLOps Architecture.
 
 ## Installation
 
@@ -21,8 +21,6 @@ If the python packages are intended to be use locally in addition to the Docker 
   pyenv update
   pyenv install 3.10.4
 ```
-
-#
 
 ### Installation of local dagster-repo
 
@@ -62,52 +60,6 @@ After the creation of your .env file run
 docker-compose --profile mlflow --profile dagster up -d --build
 ```
 
-## Deployment
-
-TBD
-
-To deploy this project run
-
-```bash
-  npm run deploy
-```
-
-## Run Locally
-
-Clone the project
-
-```bash
-  git clone git@github.com:MalteHe/MLOps.git
-```
-
-Run the nomad agent
-
-```bash
-  sudo nomad agent -dev -bind 0.0.0.0 -log-level INFO
-```
-
-Use another terminal session to discover the nomad agent
-
-```bash
-  nomad node status
-```
-
-Start the server
-
-```bash
-  npm run start
-```
-
-## Usage/Examples
-
-```javascript
-import Component from "my-project";
-
-function App() {
-  return <Component />;
-}
-```
-
 ### Default Login Credentials
 
 - Minio
@@ -117,9 +69,9 @@ function App() {
   - Username: admin
   - Password: admin
 
-## Screenshots
+## Architecture Overview
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![MLOps Architecture Overview](https://github.com/MalteHe/MLOps/blob/main/images/architecture.png?raw=true)
 
 ## Authors
 
@@ -154,9 +106,3 @@ The reason for this is often that the 'libffi-dev' package was not installed at 
   pyenv uninstall 3.10.4
   pyenv install 3.10.4
 ```
-
-## Acknowledgements
-
-TBD
-
-- []()
