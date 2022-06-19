@@ -1,5 +1,5 @@
 ops:
-  load_mlflow_model:
+  load_model:
     config:
       model_uri: models:/wine-rfc/2
   create_service:
